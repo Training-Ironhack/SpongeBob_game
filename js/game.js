@@ -13,9 +13,10 @@ const game = {
     framesCounter: 0,
     enemies: [],
     crazyEnemies: [],
+    bonus: [],
     score: 0,
     background: undefined,
-   
+
 
 
     init(canvasId) {
@@ -48,6 +49,7 @@ const game = {
             this.audioBob()
             this.clearAll()
             this.drawAll()
+            this.generateBonus()
             this.generateCrazyEnemies()
             this.generateEnemies()
             this.clearEnemies()
@@ -55,7 +57,7 @@ const game = {
             this.sumScore()
             this.printScore()
             this.printLives()
-        }, 50 )
+        }, 50)
     },
 
     reset() {
@@ -63,6 +65,7 @@ const game = {
         this.player = undefined
         this.enemies = []
         this.crazyEnemies = []
+        this.bonus = []
         this.score = 0
         this.lives = 3
     },
@@ -71,7 +74,8 @@ const game = {
         this.drawBattleField()
         this.enemies.forEach(enemy => enemy.draw(this.framesCounter))
         this.crazyEnemies.forEach(crazyEnemy => crazyEnemy.draw(this.framesCounter))
-        this.player.draw(this.framesCounter)   
+        this.player.draw(this.framesCounter)
+        this.bonus.draw()
     },
 
     setEventListeners() {
@@ -94,8 +98,8 @@ const game = {
 
     drawBattleField() {
         this.image = new Image(),
-        this.image.src = "images/fondo.png" 
-        this.ctx.drawImage(this.image, - 165, 0, this.canvasSize.w + 350,this.canvasSize.h)
+            this.image.src = "images/fondo.png"
+        this.ctx.drawImage(this.image, - 165, 0, this.canvasSize.w + 350, this.canvasSize.h)
         //this.ctx.fillStyle = 'black'
         //this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
@@ -116,9 +120,14 @@ const game = {
         }
     },
 
+    generateBonus() {
+        this.bonus.push(new bonus(this.ctx, this.canvasSize.w, this.canvasSize.h))
+    },
+
     clearEnemies() {
         this.enemies = this.enemies.filter((enemy) => enemy.enemyPos.y < this.canvasSize.h)
         this.crazyEnemies = this.crazyEnemies.filter((crazyEnemy) => crazyEnemy.crazyEnemyPos.y < this.canvasSize.h)
+        this.bonus = this.bonus.filter((bonus) => bonus.bonusPos.y < this.canvasSize.h)
     },
 
     isCollisionEnemy() {
@@ -239,7 +248,7 @@ const game = {
 
     printGameOver() {
         this.ctx.fillStyle = 'black'
-        this.ctx.fillRect (this.canvasSize.w / 2 - this.canvasSize.w / 2.3, this.canvasSize.h / 2 - 125, 550, 200)
+        this.ctx.fillRect(this.canvasSize.w / 2 - this.canvasSize.w / 2.3, this.canvasSize.h / 2 - 125, 550, 200)
         let text = 'GAME OVER!'
         this.ctx.font = '80px Arial'
         this.ctx.fillStyle = 'white'
@@ -253,7 +262,7 @@ const game = {
         audioElement.play();
     },
 
-    audioBob(){
+    audioBob() {
         let bobMusic = document.getElementById("audioBob")
         bobMusic.play()
     },
